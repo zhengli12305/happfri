@@ -1,10 +1,10 @@
-import './style/common.css'
-import './config/rem.ts'
+import './src/style/common.css'
+import './src/config/rem.ts'
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
-import ajax from './config/ajax'
-import App from './App.vue'
-import router from './router'
+import ajax from './src/config/ajax'
+import App from './src/App.vue'
+import router from './src/router'
 
 const app = createApp(App)
 app.config.globalProperties.$ajax = ajax

@@ -58,6 +58,14 @@ onMounted(() => {
   cursor: pointer;
 }
 
+.drawer-mask {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  background: rgba(15, 23, 42, 0.45);
+  cursor: pointer;
+}
+
 .hint {
   margin-top: 12px;
   color: #b45309;
