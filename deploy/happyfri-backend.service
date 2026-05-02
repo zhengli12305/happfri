@@ -1,0 +1,20 @@
+# 安装路径假设为 /opt/happyfri
+# sudo cp deploy/happyfri-backend.service /etc/systemd/system/
+# sudo systemctl daemon-reload && sudo systemctl enable --now happyfri-backend
+
+[Unit]
+Description=HappyFri quiz parser API (FastAPI)
+After=network.target
+
+[Service]
+Type=simple
+User=www-data
+Group=www-data
+WorkingDirectory=/opt/happyfri/backend
+Environment=PATH=/opt/happyfri/backend/venv/bin
+ExecStart=/opt/happyfri/backend/venv/bin/uvicorn app.main:app --host 127.0.0.1 --port 8000
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
