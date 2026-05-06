@@ -1,7 +1,7 @@
 <template>
   <div class="home-main">
     <p class="level-tip">{{ gameStore.level }}</p>
-    <img src="../images/1-2.png" alt="Logo" class="home-logo-img">
+    <img :src="homeLogo" alt="Logo" class="home-logo-img">
     <button class="start-btn" @click="startQuiz">开始答题</button>
     <p v-if="hintMessage" class="hint">{{ hintMessage }}</p>
   </div>
@@ -11,6 +11,7 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useGameStore } from '@/stores/game'
+import homeLogo from '@/assets/hero.png'
 
 const router = useRouter()
 const gameStore = useGameStore()

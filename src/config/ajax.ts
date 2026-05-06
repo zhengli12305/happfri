@@ -1,10 +1,11 @@
 // src/utils/request.ts
-import axios from 'axios';
-import type { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
+import axios from 'axios'
+import type { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios'
+import { getApiRoot } from '@/config/api'
 
 // 1. 创建 axios 实例
 const service: AxiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || '/api', // 确保你的 .env 文件中有这个变量，或者改为硬编码字符串
+  baseURL: getApiRoot() || '/api',
   timeout: 15000, 
   headers: {
     'Content-Type': 'application/json',

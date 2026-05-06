@@ -8,54 +8,18 @@ pnpm-debug.log*
 lerna-debug.log*
 
 node_modules
-.DS_Store
 dist
 dist-ssr
-coverage
 *.local
+.env.production
 
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
 .idea
+.DS_Store
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
-
-*.tsbuildinfo
-
-.eslintcache
-
-# Cypress
-/cypress/videos/
-/cypress/screenshots/
-
-# Vitest
-__screenshots__/
-
-# Vite
-*.timestamp-*-*.mjs
-
-# Frontend build output
-public/static/
-public/index.html
-dist/
-
-# Local env files
-.env.production
-
-# Python backend cache/build
-backend/**/__pycache__/
-*.py[cod]
-
-# Electron build/cache
-.electron-cache/
-desktop/build/
-desktop/dist/
-desktop/release/
-
-# Resume/generated scripts assets
-scripts/generate_resume_*.py
-*.docx

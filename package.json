@@ -1,90 +1,26 @@
 {
-  "name": "happyfri-vue3",
-  "version": "0.0.0",
+  "name": "happfri",
   "private": true,
+  "version": "0.0.0",
   "type": "module",
-  "main": "desktop/main.cjs",
-  "sideEffects": false,
   "scripts": {
     "dev": "vite",
-    "build": "run-p type-check \"build-only {@}\" --",
-    "preview": "vite preview",
-    "build-only": "vite build",
-    "type-check": "vue-tsc --build",
-    "format": "prettier --write --experimental-cli src/",
-    "desktop:build-backend": "python -m PyInstaller --onefile --name backend --distpath ./desktop/dist/backend --workpath ./desktop/build/backend-work --specpath ./desktop/build/backend-spec ./backend/run_desktop.py",
-    "desktop:pack": "npm run build-only && npm run desktop:build-backend && electron-builder --win nsis",
-    "desktop:dist": "npm run desktop:pack"
+    "build": "vue-tsc -b && vite build && node scripts/copy-spa-fallback.mjs",
+    "preview": "vite preview"
   },
   "dependencies": {
-    "axios": "^1.13.6",
+    "axios": "^1.13.2",
     "pinia": "^3.0.4",
-    "vue": "^3.5.30",
-    "vue-router": "^5.0.3"
+    "vue": "^3.5.32",
+    "vue-router": "^4.6.4"
   },
   "devDependencies": {
-    "@rushstack/eslint-patch": "^1.16.1",
-    "@tsconfig/node24": "^24.0.4",
-    "@types/axios": "^0.9.36",
-    "@types/node": "^24.12.0",
-    "@vitejs/plugin-vue": "^6.0.4",
-    "@vue/eslint-config-prettier": "^10.2.0",
-    "@vue/eslint-config-typescript": "^14.7.0",
-    "@vue/tsconfig": "^0.9.0",
-    "electron": "^37.10.3",
-    "electron-builder": "^26.8.1",
-    "eslint": "^10.2.1",
-    "eslint-plugin-vue": "^10.9.0",
-    "less": "^4.6.4",
-    "npm-run-all2": "^8.0.4",
-    "prettier": "^3.8.1",
-    "typescript": "~5.9.3",
-    "vite": "^7.3.1",
-    "vite-plugin-compression": "^0.5.1",
-    "vite-plugin-vue-devtools": "^8.0.7",
-    "vue-tsc": "^3.2.5"
-  },
-  "build": {
-    "appId": "com.happyfri.quiz",
-    "productName": "HappyFri Quiz",
-    "directories": {
-      "output": "desktop/release"
-    },
-    "files": [
-      "desktop/main.cjs",
-      "desktop/preload.cjs",
-      "public/**/*",
-      "package.json"
-    ],
-    "extraResources": [
-      {
-        "from": "desktop/dist/backend",
-        "to": "backend",
-        "filter": [
-          "**/*"
-        ]
-      },
-      {
-        "from": "public",
-        "to": "renderer/public",
-        "filter": [
-          "**/*"
-        ]
-      }
-    ],
-    "win": {
-      "executableName": "electron",
-      "target": [
-        {
-          "target": "nsis",
-          "arch": [
-            "x64"
-          ]
-        }
-      ]
-    }
-  },
-  "engines": {
-    "node": "^20.19.0 || >=22.12.0"
+    "@types/node": "^24.12.2",
+    "@vitejs/plugin-vue": "^6.0.6",
+    "@vue/tsconfig": "^0.9.1",
+    "less": "^4.5.1",
+    "typescript": "~6.0.2",
+    "vite": "^8.0.10",
+    "vue-tsc": "^3.2.7"
   }
 }

@@ -15,14 +15,13 @@
 
 <script setup lang="ts">
 import { onMounted, ref, defineAsyncComponent } from 'vue'
-import { useGameStore } from '@/stores/game'
+import homeBg from '@/assets/hero.png'
 import HomeContent from '../components/HomeContent.vue'
 
 const UploadDrawer = defineAsyncComponent(() =>
   import('../components/UploadDrawer.vue')
 )
 
-const gameStore = useGameStore()
 const isDrawerOpen = ref(false)
 
 function openDrawer() {
@@ -34,8 +33,7 @@ function closeDrawer() {
 }
 
 onMounted(() => {
-  const base = import.meta.env.BASE_URL
-  document.body.style.backgroundImage = `url('${base}static/img/1-1.webp'), url('${base}static/img/1-1.jpg')`
+  document.body.style.backgroundImage = `url('${homeBg}')`
 })
 </script>
 

@@ -1,16 +1,13 @@
 import axios from 'axios'
+import { apiUrl } from '@/config/api'
 import type { QuizParseResult } from '@/stores/game'
-
-const apiBaseUrl = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '')
 
 export async function parseQuizFile(file: File): Promise<QuizParseResult> {
   const formData = new FormData()
   formData.append('file', file)
 
-  const response = await axios.post<QuizParseResult>(`${apiBaseUrl}/api/parse-questions`, formData, {
-    headers: {
-      'Content-Type': 'multipart/form-data'
-    },
+  // 不要手动设 Content-Type：multipart 需带 boundary，由浏览器自动补全
+  const response = await axios.post<QuizParseResult>(apiUrl('/api/parse-questions'), formData, {
     timeout: 60000
   })
 
