@@ -28,6 +28,28 @@ jobs:
           node-version: '22'
           cache: npm
       - run: npm ci
+      # 须使用「仓库密钥」Repository secrets，不是 Environment；名称须完全一致：VITE_API_BASE_URL
+      - name: Check VITE_API_BASE_URL (HTTPS required for GitHub Pages)
+        env:
+          VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL }}
+        run: |
+          if [ -z "$VITE_API_BASE_URL" ]; then
+            echo "::error::未设置仓库密钥 VITE_API_BASE_URL。请到 Settings → Secrets and variables → Actions → Repository secrets 新建/编辑（不要用 Environment 里那份，除非给 build job 配 environment）。"
+            exit 1
+          fi
+          case "$VITE_API_BASE_URL" in
+            http://*)
+              echo "::error::GitHub Pages 是 HTTPS，不能使用 http:// 的 API 地址（当前为混合内容）。请把 VITE_API_BASE_URL 改为 https://api.iww.pub 这类 HTTPS 根地址。"
+              exit 1
+              ;;
+          esac
+          case "$VITE_API_BASE_URL" in
+            https://*) ;;
+            *)
+              echo "::error::VITE_API_BASE_URL 须以 https:// 开头。"
+              exit 1
+              ;;
+          esac
       - name: Build
         run: npm run build
         env:
