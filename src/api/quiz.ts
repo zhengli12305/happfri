@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { apiUrl } from '@/config/api'
-import type { QuizParseResult } from '@/stores/game'
+import type { QuizParseResult } from '@/stores/gameTypes'
 
 export async function parseQuizFile(file: File): Promise<QuizParseResult> {
   const formData = new FormData()

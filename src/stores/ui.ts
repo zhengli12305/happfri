@@ -1,27 +1,17 @@
-import { defineStore } from 'pinia';
-import { ref } from 'vue';
+import { create } from 'zustand'
 
-export const useUiStore = defineStore('ui', () => {
-  const loading = ref<boolean>(false);
-  const error = ref<string>('');
+interface UiState {
+  loading: boolean
+  error: string
+  setLoading: (value: boolean) => void
+  setError: (message: string) => void
+  clearError: () => void
+}
 
-  function setLoading(value: boolean) {
-    loading.value = value;
-  }
-
-  function setError(message: string) {
-    error.value = message;
-  }
-
-  function clearError() {
-    error.value = '';
-  }
-
-  return {
-    loading,
-    error,
-    setLoading,
-    setError,
-    clearError,
-  };
-});
+export const useUiStore = create<UiState>((set) => ({
+  loading: false,
+  error: '',
+  setLoading: (value) => set({ loading: value }),
+  setError: (message) => set({ error: message }),
+  clearError: () => set({ error: '' }),
+}))

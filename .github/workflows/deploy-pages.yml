@@ -58,8 +58,8 @@ jobs:
       - name: Verify dist is built bundle (not dev index.html)
         run: |
           test -f dist/index.html
-          if grep -qE 'src="/src/main\.ts"|/src/main\.ts' dist/index.html; then
-            echo '::error::dist 仍引用 /src/main.ts，说明构建产物异常。请本地执行 npm run build 检查。'
+          if grep -qE 'src="/src/main\.tsx"|/src/main\.tsx' dist/index.html; then
+            echo '::error::dist 仍引用 /src/main.tsx，说明构建产物异常。请本地执行 npm run build 检查。'
             exit 1
           fi
           if ! grep -q 'assets/index-' dist/index.html; then

@@ -1,6 +1,6 @@
 import { fileURLToPath, URL } from 'node:url'
 import { defineConfig } from 'vite'
-import vue from '@vitejs/plugin-vue'
+import react from '@vitejs/plugin-react'
 
 /** GitHub 项目页为 https://<user>.github.io/<repo>/，须带首尾斜杠。CI 里由 VITE_BASE_PATH 注入。 */
 function productionBase(): string {
@@ -12,7 +12,7 @@ function productionBase(): string {
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => ({
   base: mode === 'production' ? productionBase() : '/',
-  plugins: [vue()],
+  plugins: [react()],
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
