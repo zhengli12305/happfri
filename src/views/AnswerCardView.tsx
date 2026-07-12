@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useLayoutEffect } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { useGameStore, type QuestionReviewItem } from '@/stores/game'
 import './AnswerCardView.css'
@@ -8,6 +8,7 @@ export default function AnswerCardView() {
   const [searchParams] = useSearchParams()
   const hasQuestions = useGameStore((s) => s.hasQuestions)
   const reviewItems = useGameStore((s) => s.reviewItems)
+  const ensureReviewComputed = useGameStore((s) => s.ensureReviewComputed)
   const currentIndex = Number(searchParams.get('current') || 1)
 
   function getCellClass(item: QuestionReviewItem) {
@@ -18,6 +19,10 @@ export default function AnswerCardView() {
   function goDetail(index: number) {
     void navigate(`/answer-card/${index}`)
   }
+
+  useLayoutEffect(() => {
+    ensureReviewComputed()
+  }, [ensureReviewComputed])
 
   useEffect(() => {
     if (!hasQuestions) {

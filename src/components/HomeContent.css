@@ -29,6 +29,14 @@
   box-shadow: none;
 }
 
+.history-link {
+  margin-top: 16px;
+  color: #eff6ff;
+  font-size: 14px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
 .hint {
   margin-top: 12px;
   color: #fef3c7;

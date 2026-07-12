@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useGameStore } from '@/stores/game'
 import './HomeContent.css'
 
@@ -33,6 +33,9 @@ export default function HomeContent({ onOpenDrawer }: HomeContentProps) {
       >
         开始答题
       </button>
+      <Link to="/history" className="history-link">
+        查看答题历史
+      </Link>
       {hintMessage ? <p className="hint">{hintMessage}</p> : null}
     </div>
   )

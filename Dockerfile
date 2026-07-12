@@ -3,11 +3,10 @@
 FROM node:22-bookworm-slim AS build
 WORKDIR /src
 
-ENV ELECTRON_MIRROR=https://npmmirror.com/mirrors/electron/
-
 COPY package.json package-lock.json ./
 RUN npm ci --registry=https://registry.npmmirror.com
 
+COPY scripts ./scripts
 COPY index.html vite.config.ts ./
 COPY tsconfig.json tsconfig.app.json tsconfig.node.json ./
 COPY env.d.ts ./
@@ -16,7 +15,7 @@ COPY src ./src
 
 # 与 Nginx 同域反代 /api，构建产物请求 /api/...
 RUN cp .env.production.example .env.production
-RUN npm run build-only
+RUN npm run build
 
 FROM nginx:1.27-alpine
 COPY --from=build /src/dist /usr/share/nginx/html

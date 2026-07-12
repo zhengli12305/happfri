@@ -1,4 +1,10 @@
-import type { QuestionReviewItem, QuizQuestion } from './gameTypes'
+import type { QuestionReviewItem, QuestionType, QuizInsight, QuizQuestion } from './gameTypes'
+
+const QUESTION_TYPE_LABELS: Record<QuestionType, string> = {
+  ONE: '单选题',
+  MORE: '多选题',
+  JUDGE: '判断题',
+}
 
 export function normalizeAnswerIds(answerIds: string[]) {
   return [...new Set(answerIds.map(String))].sort()
@@ -49,4 +55,43 @@ export function computeReviewItems(
       isCorrect: isSameAnswerSet(userAnswerIds, correctAnswerIds),
     }
   })
+}
+
+export function computeQuizInsight(reviewItems: QuestionReviewItem[]): QuizInsight {
+  const total = reviewItems.length
+  const answered = reviewItems.filter((item) => item.userAnswerIds.length > 0).length
+  const correct = reviewItems.filter((item) => item.isCorrect).length
+  const wrong = Math.max(answered - correct, 0)
+  const unanswered = Math.max(total - answered, 0)
+
+  const typeAccuracy = (Object.keys(QUESTION_TYPE_LABELS) as QuestionType[])
+    .map((type) => {
+      const items = reviewItems.filter((item) => item.type === type)
+      const typeCorrect = items.filter((item) => item.isCorrect).length
+      return {
+        type,
+        label: QUESTION_TYPE_LABELS[type],
+        total: items.length,
+        correct: typeCorrect,
+        accuracy: items.length ? Math.round((typeCorrect / items.length) * 100) : 0,
+      }
+    })
+    .filter((item) => item.total > 0)
+
+  const weakestType =
+    typeAccuracy.length > 0
+      ? [...typeAccuracy].sort((a, b) => a.accuracy - b.accuracy || b.total - a.total)[0]!
+      : null
+
+  return {
+    total,
+    answered,
+    correct,
+    wrong,
+    unanswered,
+    accuracy: total ? Math.round((correct / total) * 100) : 0,
+    completionRate: total ? Math.round((answered / total) * 100) : 0,
+    typeAccuracy,
+    weakestType,
+  }
 }

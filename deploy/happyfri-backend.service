@@ -12,6 +12,7 @@ User=www-data
 Group=www-data
 WorkingDirectory=/opt/happyfri/backend
 Environment=PATH=/opt/happyfri/backend/venv/bin
+Environment=HAPPYFRI_DB_PATH=/opt/happyfri/backend/data/happyfri.db
 ExecStart=/opt/happyfri/backend/venv/bin/uvicorn app.main:app --host 127.0.0.1 --port 8000
 Restart=on-failure
 RestartSec=5

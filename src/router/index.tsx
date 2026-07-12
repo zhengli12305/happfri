@@ -7,6 +7,7 @@ const ItemView = lazy(() => import('../views/ItemView'))
 const ScoreView = lazy(() => import('../views/ScoreView'))
 const AnswerCardView = lazy(() => import('../views/AnswerCardView'))
 const AnswerDetailView = lazy(() => import('../views/AnswerDetailView'))
+const HistoryView = lazy(() => import('../views/HistoryView'))
 
 function withSuspense(element: ReactNode) {
   return <Suspense fallback={null}>{element}</Suspense>
@@ -40,5 +41,9 @@ export const routes: RouteObject[] = [
   {
     path: '/answer-card/:index',
     element: withSuspense(<AnswerDetailView />),
+  },
+  {
+    path: '/history',
+    element: withSuspense(<HistoryView />),
   },
 ]

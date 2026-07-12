@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useLayoutEffect } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { useGameStore } from '@/stores/game'
 import './AnswerDetailView.css'
@@ -9,6 +9,7 @@ export default function AnswerDetailView() {
   const hasQuestions = useGameStore((s) => s.hasQuestions)
   const reviewItems = useGameStore((s) => s.reviewItems)
   const questions = useGameStore((s) => s.questions)
+  const ensureReviewComputed = useGameStore((s) => s.ensureReviewComputed)
 
   const questionIndex = Number(index) || 1
   const reviewItem = reviewItems[questionIndex - 1]
@@ -34,15 +35,20 @@ export default function AnswerDetailView() {
     void navigate(`/answer-card/${questionIndex + 1}`)
   }
 
+  useLayoutEffect(() => {
+    ensureReviewComputed()
+  }, [ensureReviewComputed])
+
   useEffect(() => {
     if (!hasQuestions) {
       void navigate('/upload', { replace: true })
       return
     }
+    if (reviewItems.length === 0) return
     if (!question || !reviewItem) {
       void navigate('/answer-card', { replace: true })
     }
-  }, [hasQuestions, question, reviewItem, navigate])
+  }, [hasQuestions, question, reviewItem, reviewItems.length, navigate])
 
   if (!reviewItem || !question) {
     return null

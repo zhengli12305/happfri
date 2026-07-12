@@ -45,8 +45,6 @@ cd "$INSTALL_ROOT"
 if [[ ! -f .env.production ]]; then
   cp .env.production.example .env.production
 fi
-# electron 默认从 GitHub 拉二进制，国内极慢
-export ELECTRON_MIRROR="${ELECTRON_MIRROR:-https://npmmirror.com/mirrors/electron/}"
 npm ci --registry="$NPM_CONFIG_REGISTRY"
 npm run build
 
@@ -58,12 +56,14 @@ systemctl reload nginx
 systemctl enable nginx
 
 install -m0644 "$INSTALL_ROOT/deploy/happyfri-backend.service" /etc/systemd/system/happyfri-backend.service
+mkdir -p "$INSTALL_ROOT/backend/data"
+chown www-data:www-data "$INSTALL_ROOT/backend/data"
 systemctl daemon-reload
 systemctl enable happyfri-backend
 systemctl restart happyfri-backend
 
-# 仅 dist 与 venv 属 www-data，避免 git pull 后无法覆盖业务代码
-chown -R www-data:www-data "$INSTALL_ROOT/dist" "$INSTALL_ROOT/backend/venv"
+# 仅 dist、venv 与 SQLite 数据目录属 www-data，避免 git pull 后无法覆盖业务代码
+chown -R www-data:www-data "$INSTALL_ROOT/dist" "$INSTALL_ROOT/backend/venv" "$INSTALL_ROOT/backend/data"
 chmod -R o+rX "$INSTALL_ROOT/backend/app" 2>/dev/null || true
 
 echo "部署完成。浏览器访问: http://$(curl -fsS --connect-timeout 3 https://api.ipify.org 2>/dev/null || echo '本机公网IP')/"

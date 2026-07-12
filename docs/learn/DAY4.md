@@ -19,9 +19,12 @@ axios.post(apiUrl('/api/parse-questions'), formData, { timeout: 60000 })
 - 开发：`getApiRoot()` 为空 → `/api/parse-questions` → Vite 代理
 - 生产：`VITE_API_BASE_URL=https://api.example.com` → 完整 URL
 
-## 3. ajax.ts 与 quiz.ts 分离
+## 3. API 模块划分
 
-`src/config/ajax.ts` 是通用 JSON 实例；上传走独立 `axios.post`，面试可说「文件上传与 JSON API 分离配置」。
+- `src/api/quiz.ts`：题库文件上传解析（`FormData` + `axios.post`）
+- `src/api/quizHistory.ts`：答题历史读写（JSON + `clientId`）
+
+上传与历史接口分离配置，面试可说「文件上传与 JSON API 分模块」。
 
 ## 4. 后端契约 `schemas.py`
 

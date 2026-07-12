@@ -1,5 +1,6 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import QuestionStripVirtual from '@/components/QuestionStripVirtual'
 import { useGameStore } from '@/stores/game'
 import './ItemContainer.css'
 
@@ -15,13 +16,9 @@ export default function ItemContainer() {
   const prevQuestion = useGameStore((s) => s.prevQuestion)
   const goToQuestion = useGameStore((s) => s.goToQuestion)
   const stopTimer = useGameStore((s) => s.stopTimer)
+  const ensureReviewComputed = useGameStore((s) => s.ensureReviewComputed)
 
   const [localSelection, setLocalSelection] = useState<string[]>([])
-
-  const visibleQuestionNumbers = useMemo(() => {
-    if (questionCount <= 0) return []
-    return Array.from({ length: questionCount }, (_, i) => i + 1)
-  }, [questionCount])
 
   useEffect(() => {
     const id = currentTopic?.id
@@ -82,7 +79,8 @@ export default function ItemContainer() {
   async function handleSubmitAnswer() {
     persistCurrentSelection()
     stopTimer()
-    await navigate('/score')
+    ensureReviewComputed()
+    await navigate('/score', { state: { freshSubmit: true } })
   }
 
   const typeLabel =
@@ -104,18 +102,11 @@ export default function ItemContainer() {
           </div>
         ) : (
           <div>
-            <div className="question-strip">
-              {visibleQuestionNumbers.map((num) => (
-                <button
-                  key={num}
-                  type="button"
-                  className={`strip-item ${num === itemNum ? 'active' : ''}`}
-                  onClick={() => handleGoToQuestion(num)}
-                >
-                  {num}
-                </button>
-              ))}
-            </div>
+            <QuestionStripVirtual
+              count={questionCount}
+              activeNum={itemNum}
+              onSelect={handleGoToQuestion}
+            />
 
             <header className="topic-title">
               <span>{typeLabel}</span>

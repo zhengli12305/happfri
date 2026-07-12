@@ -28,12 +28,25 @@
 }
 
 .question-strip {
-  display: flex;
-  gap: 10px;
   overflow-x: auto;
   padding: 2px 2px 12px;
   margin-bottom: 14px;
   scrollbar-width: thin;
+}
+
+.question-strip-virtual {
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.question-strip-inner {
+  position: relative;
+  height: 46px;
+}
+
+.question-strip-virtual .strip-item {
+  position: absolute;
+  top: 0;
 }
 
 .strip-item {

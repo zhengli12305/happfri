@@ -16,8 +16,10 @@ flowchart LR
   JSON --> GameStore[useGameStore]
   GameStore --> Item[ItemView]
   Item --> Score[ScoreView]
+  Score --> History[HistoryView]
   Score --> Card[AnswerCardView]
   Card --> Detail[AnswerDetailView]
+  History --> HistoryAPI["GET /api/quiz-results"]
 ```
 
 ## 路由表
@@ -28,6 +30,7 @@ flowchart LR
 | `/upload` | UploadView | 独立上传页 |
 | `/item` | ItemView | 答题（可 `state.reset` 重练） |
 | `/score` | ScoreView | 成绩 |
+| `/history` | HistoryView | 答题历史与 ECharts 统计 |
 | `/answer-card` | AnswerCardView | 答题卡网格 |
 | `/answer-card/:index` | AnswerDetailView | 单题复盘 |
 
@@ -49,7 +52,8 @@ flowchart LR
 | 开发 | 相对路径 `/api/...`，Vite 代理到 `127.0.0.1:8000` |
 | 生产 | `VITE_API_BASE_URL` + 路径，见 `src/config/api.ts` |
 
-上传：`src/api/quiz.ts`，`FormData`，不手动设 `Content-Type`。
+上传：`src/api/quiz.ts`，`FormData`，不手动设 `Content-Type`。  
+历史：`src/api/quizHistory.ts`，`clientId` 关联 `POST/GET /api/quiz-results`。
 
 ## 后端
 
@@ -57,6 +61,7 @@ flowchart LR
 |------|------|
 | `GET /health` | `backend/app/main.py` |
 | `POST /api/parse-questions` | `main.py` → `parser.parse_uploaded_file` |
+| `POST/GET /api/quiz-results` | `main.py` → SQLite `backend/data/happyfri.db` |
 
 契约：`backend/app/schemas.py`（Pydantic）
 

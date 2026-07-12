@@ -29,7 +29,7 @@ function computeCurrentTopic(questions: QuizQuestion[], itemNum: number): QuizQu
   return index >= 0 && index < questions.length ? (questions[index] ?? null) : null
 }
 
-function syncDerived(
+function syncQuizNavigation(
   questions: QuizQuestion[],
   itemNum: number,
   userAnswersMap: Record<string, string[]>,
@@ -41,6 +41,14 @@ function syncDerived(
     isLastQuestion: questionCount > 0 && itemNum >= questionCount,
     hasQuestions: questionCount > 0,
     answeredCount: Object.keys(userAnswersMap).length,
+  }
+}
+
+function syncReviewResults(
+  questions: QuizQuestion[],
+  userAnswersMap: Record<string, string[]>,
+) {
+  return {
     calculateScore: computeCalculateScore(questions, userAnswersMap),
     reviewItems: computeReviewItems(questions, userAnswersMap),
   }
@@ -87,6 +95,8 @@ interface GameState {
   clearAllData: () => void
   startTimer: () => void
   stopTimer: () => void
+  ensureReviewComputed: () => void
+  persistSession: () => void
 }
 
 export const useGameStore = create<GameState>((set, get) => ({
@@ -110,7 +120,9 @@ export const useGameStore = create<GameState>((set, get) => ({
     set({
       quizTitle: payload.quizTitle || '智能题库',
       questions,
-      ...syncDerived(questions, 1, {}),
+      calculateScore: 0,
+      reviewItems: [],
+      ...syncQuizNavigation(questions, 1, {}),
     })
     get().initializeData()
     useUiStore.getState().clearError()
@@ -124,7 +136,7 @@ export const useGameStore = create<GameState>((set, get) => ({
     }
     set({
       userAnswersMap,
-      ...syncDerived(get().questions, get().itemNum, userAnswersMap),
+      ...syncQuizNavigation(get().questions, get().itemNum, userAnswersMap),
     })
     snapshotFromState(get())
   },
@@ -141,7 +153,7 @@ export const useGameStore = create<GameState>((set, get) => ({
       const nextNum = itemNum + 1
       set({
         itemNum: nextNum,
-        ...syncDerived(get().questions, nextNum, get().userAnswersMap),
+        ...syncQuizNavigation(get().questions, nextNum, get().userAnswersMap),
       })
       snapshotFromState(get())
       return
@@ -157,7 +169,7 @@ export const useGameStore = create<GameState>((set, get) => ({
       const nextNum = get().itemNum - 1
       set({
         itemNum: nextNum,
-        ...syncDerived(get().questions, nextNum, get().userAnswersMap),
+        ...syncQuizNavigation(get().questions, nextNum, get().userAnswersMap),
       })
       snapshotFromState(get())
     }
@@ -169,7 +181,7 @@ export const useGameStore = create<GameState>((set, get) => ({
     const safeIndex = Math.min(Math.max(targetIndex, 1), questionCount)
     set({
       itemNum: safeIndex,
-      ...syncDerived(get().questions, safeIndex, get().userAnswersMap),
+      ...syncQuizNavigation(get().questions, safeIndex, get().userAnswersMap),
     })
     snapshotFromState(get())
   },
@@ -181,7 +193,9 @@ export const useGameStore = create<GameState>((set, get) => ({
       itemNum: 1,
       elapsedTime: 0,
       userAnswersMap,
-      ...syncDerived(get().questions, 1, userAnswersMap),
+      calculateScore: 0,
+      reviewItems: [],
+      ...syncQuizNavigation(get().questions, 1, userAnswersMap),
     })
     useUiStore.getState().clearError()
     snapshotFromState(get())
@@ -197,7 +211,9 @@ export const useGameStore = create<GameState>((set, get) => ({
       elapsedTime: 0,
       userAnswersMap: {},
       timerId: null,
-      ...syncDerived(questions, 1, {}),
+      calculateScore: 0,
+      reviewItems: [],
+      ...syncQuizNavigation(questions, 1, {}),
     })
     clearGameSession()
   },
@@ -206,7 +222,6 @@ export const useGameStore = create<GameState>((set, get) => ({
     if (get().timerId !== null) return
     const timerId = window.setInterval(() => {
       set({ elapsedTime: get().elapsedTime + 1 })
-      snapshotFromState(get())
     }, 1000)
     set({ timerId })
   },
@@ -217,6 +232,20 @@ export const useGameStore = create<GameState>((set, get) => ({
       clearInterval(timerId)
       set({ timerId: null })
     }
+    snapshotFromState(get())
+  },
+
+  ensureReviewComputed: () => {
+    const { questions, userAnswersMap } = get()
+    if (!questions.length) {
+      set({ calculateScore: 0, reviewItems: [] })
+      return
+    }
+    set(syncReviewResults(questions, userAnswersMap))
+  },
+
+  persistSession: () => {
+    snapshotFromState(get())
   },
 }))
 
@@ -232,6 +261,8 @@ export function hydrateGameStoreFromSession() {
     elapsedTime: data.elapsedTime,
     userAnswersMap: data.userAnswersMap,
     timerId: null,
-    ...syncDerived(data.questions, data.itemNum, data.userAnswersMap),
+    calculateScore: 0,
+    reviewItems: [],
+    ...syncQuizNavigation(data.questions, data.itemNum, data.userAnswersMap),
   })
 }
